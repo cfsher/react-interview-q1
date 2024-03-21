@@ -10,6 +10,7 @@ function App() {
   const [duplicate, setDuplicate] = useState(false);
   const [data, setData] = useState([]);
 
+  // useEffect used here similar to componentDidMount, being called only on initial render
   useEffect(() => {
     const fetchCountries = async () => {
       const locs = await getLocations();
@@ -20,6 +21,9 @@ function App() {
     fetchCountries();
   }, []);
 
+  // due to the random finish time of name validation a more recent request could finish after a previous request
+  // we use a boolean flag to handle such race conditions. only most recent request will update state
+  // this logic is handled via the clean up returned by useEffect
   useEffect(() => {
     let active = true;
     setDuplicate(false);
@@ -44,6 +48,7 @@ function App() {
     setName(value);
   };
 
+  // clear all state to initial values
   const clear = () => {
     setName("");
     setValid(true);
@@ -51,6 +56,7 @@ function App() {
     setLocation(locations[0]);
   };
 
+  // creates a newItem based on current state, checks if entry is a duplicate then appends to table data
   const add = () => {
     const newItem = { name, location };
     const inTable = data.some(
@@ -65,6 +71,8 @@ function App() {
     }
   };
 
+  // fairly trivial jsx here. we have name validation text that appears conditionally
+  // table with data variable mapped to table rows
   return (
     <div className="container">
       <div className="row">
